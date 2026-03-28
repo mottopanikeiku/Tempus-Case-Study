@@ -710,6 +710,13 @@ const AI_ASSET_FILES = {
   weekPlanPrompt: "ai/week_plan_prompt.md",
   evalChecklist: "evals/output-checklist.md"
 };
+const AI_PROMPT_TOKEN_REQUIREMENTS = {
+  priorityRationalePrompt: ["provider_name", "provider_title", "provider_institution", "stakeholder_type", "priority_score", "why_now", "next_best_action"],
+  objectionResponsePrompt: ["provider_name", "stakeholder_type", "crm_note", "objections", "next_step"],
+  introScriptPrompt: ["provider_name", "provider_specialty", "provider_institution", "why_now", "research_context", "competitor"],
+  meetingPitchPrompt: ["provider_name", "provider_specialty", "provider_institution", "stakeholder_type", "recent_crm_context", "why_now", "tone"],
+  weekPlanPrompt: ["territory_name", "rep_name", "top_accounts"]
+};
 const LOCAL_INPUT_RULES = {
   marketRequiredColumns: [
     "id","name","credentials","title","institution","hospital_system","city","state","specialty",
@@ -1372,6 +1379,10 @@ function normalizeAssetText(text) {
   return String(text || "").replace(/\r\n/g, "\n").trim();
 }
 
+function getMissingPromptTokens(template, requiredTokens = []) {
+  return requiredTokens.filter(token => !String(template || "").includes(`{{${token}}}`));
+}
+
 function splitCrmBlocks(text) {
   return String(text || "")
     .split(/\n={3,}\n/g)
@@ -1552,21 +1563,31 @@ async function loadAiAssets() {
   const entries = Object.entries(AI_ASSET_FILES);
   const results = await Promise.allSettled(entries.map(([, path]) => fetchTextFile(path)));
   let loadedCount = 0;
+  const invalidAssets = [];
 
   results.forEach((result, index) => {
     const [key] = entries[index];
     if (result.status === "fulfilled") {
       const text = normalizeAssetText(result.value);
-      if (text) {
+      const missingTokens = getMissingPromptTokens(text, AI_PROMPT_TOKEN_REQUIREMENTS[key] || []);
+      if (text && !missingTokens.length) {
         AI_ASSETS[key] = text;
         loadedCount++;
+      } else if (text && missingTokens.length) {
+        invalidAssets.push(`${key} missing ${missingTokens.join(", ")}`);
       }
     }
   });
 
   if (loadedCount === entries.length) aiAssetStatus = "AI prompt pack loaded";
-  else if (loadedCount > 0) aiAssetStatus = `AI prompts ${loadedCount}/${entries.length}`;
+  else if (loadedCount > 0) aiAssetStatus = invalidAssets.length
+    ? `AI prompts ${loadedCount}/${entries.length} (fallback for invalid prompt files)`
+    : `AI prompts ${loadedCount}/${entries.length}`;
   else aiAssetStatus = "Embedded AI prompts";
+
+  if (invalidAssets.length) {
+    console.warn("Invalid AI prompt assets; using embedded fallback:", invalidAssets);
+  }
 }
 
 function getLatestInteraction(p) {

@@ -1,3 +1,11 @@
+## Context
+
+- Provider: {{provider_name}}
+- Stakeholder type: {{stakeholder_type}}
+- CRM note: {{crm_note}}
+- Open objections: {{objections}}
+- Suggested next step: {{next_step}}
+
 ## Goal
 
 Draft a short spoken objection response the rep can edit before using live.
@@ -28,7 +36,8 @@ Convert the answer into a low-pressure next step or pilot ask.
 
 ## Output Standard
 
-- Must mention the actual concern from the CRM note.
+- Must use the actual CRM note and tagged objection context above.
+- Must mention the specific concern raised, not a generic placeholder concern.
 - Must include at least one evidence-backed fact when available.
-- Must end with a clear next ask.
+- Must end with a clear next ask aligned to the suggested next step.
 - Must sound conversational, not legalistic or promotional.

@@ -15,8 +15,17 @@ $requiredFiles = @(
   "ai/week_plan_prompt.md"
 )
 
+$requiredTemplateTokens = @{
+  "prompts/objection-handler.md" = @("provider_name", "stakeholder_type", "crm_note", "objections", "next_step")
+  "prompts/meeting-script.md" = @("provider_name", "provider_specialty", "provider_institution", "stakeholder_type", "recent_crm_context", "why_now", "tone")
+  "ai/priority_rationale_prompt.md" = @("provider_name", "provider_title", "provider_institution", "stakeholder_type", "priority_score", "why_now", "next_best_action")
+  "ai/intro_script_prompt.md" = @("provider_name", "provider_specialty", "provider_institution", "why_now", "research_context", "competitor")
+  "ai/week_plan_prompt.md" = @("territory_name", "rep_name", "top_accounts")
+}
+
 $missing = @()
 $empty = @()
+$tokenIssues = @()
 
 foreach ($relativePath in $requiredFiles) {
   $fullPath = Join-Path $root $relativePath
@@ -29,6 +38,14 @@ foreach ($relativePath in $requiredFiles) {
   if (-not $content) {
     $empty += $relativePath
   }
+
+  if ($requiredTemplateTokens.ContainsKey($relativePath)) {
+    $requiredTemplateTokens[$relativePath] | ForEach-Object {
+      if ($content -notmatch ("\{\{" + [regex]::Escape($_) + "\}\}")) {
+        $tokenIssues += "$relativePath missing token {{$($_)}}"
+      }
+    }
+  }
 }
 
 if ($missing.Count -gt 0) {
@@ -37,6 +54,10 @@ if ($missing.Count -gt 0) {
 
 if ($empty.Count -gt 0) {
   Write-Error ("Empty AI asset files: " + ($empty -join ", "))
+}
+
+if ($tokenIssues.Count -gt 0) {
+  Write-Error ("Invalid prompt template tokens: " + ($tokenIssues -join "; "))
 }
 
 $tokenSummary = @{}

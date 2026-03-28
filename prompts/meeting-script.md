@@ -1,3 +1,11 @@
+## Context
+
+- Provider: {{provider_name}}, {{provider_specialty}} at {{provider_institution}}
+- Stakeholder type: {{stakeholder_type}}
+- Recent CRM context: {{recent_crm_context}}
+- Why now: {{why_now}}
+- Tone: {{tone}}
+
 ## Goal
 
 Draft a 30-second meeting opener the rep can use as a starting point.
@@ -15,6 +23,7 @@ Draft a 30-second meeting opener the rep can use as a starting point.
 
 ## Output Requirements
 
+- Use the context above directly; do not ask for more account details.
 - Use one concrete, evidence-backed Tempus fact when available.
 - Mention why this conversation matters now.
 - End with a low-pressure next ask.
