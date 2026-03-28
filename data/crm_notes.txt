@@ -1,0 +1,94 @@
+provider_id: P001
+provider_name: Dr. Sarah Chen
+2025-11-15 | conference | Jordan Marks | warm | competitor_loyalty, needs_comparison_data | Send xF vs Guardant comparison; Schedule TIME trial demo
+Met at ASTRO. Dr. Chen was interested in xF for monitoring Stage IV NSCLC patients post-pembrolizumab, but she said the team is comfortable with Guardant360 and does not want extra workflow change unless the value is obvious. She asked for side-by-side data and also brought up trial matching because she has a few patients she still cannot place.
+---
+2026-01-22 | email | Jordan Marks | hot |  | Set up pilot program; Coordinate with lab director Dr. Raj Patel
+Sent comparison data. Dr. Chen replied asking about specimen requirements because the clinic already keeps Streck tubes on hand. After I confirmed we use Streck, she said she would likely try xF on a small five-patient pilot next quarter if compliance does not drag.
+---
+2026-03-05 | phone | Jordan Marks | hot |  | Follow up on compliance approval; Prepare onboarding materials
+Quick check-in call. Pilot paperwork is in compliance review, so timing is still a little loose. Dr. Chen mentioned she showed our comparison slide at tumor board and the reaction was positive, but she wants the operational details settled before she commits to dates.
+===
+provider_id: P003
+provider_name: Dr. Priya Patel
+2025-10-08 | in-person | Jordan Marks | warm | turnaround_time | Send STAT pricing and logistics info; Connect with lab team on STAT workflow
+Office visit. Dr. Patel is running 30 tests per month through us, mostly CRC and pancreatic. She wants to expand to HCC but is concerned about turnaround time for treatment-naive patients who need to start systemic therapy quickly.
+---
+2025-12-12 | phone | Jordan Marks | warm | turnaround_time, cost_reimbursement | Get STAT billing and coverage details from reimbursement team
+Discussed the STAT option and 5-7 day turnaround. She liked the speed but pushed on whether the faster workflow changes patient cost or creates extra authorization friction for her staff.
+---
+2026-02-18 | email | Jordan Marks | hot |  | Monitor STAT cases; Share MSI and TMB clinical data
+Sent STAT coverage information. Dr. Patel said she would start with three treatment-naive HCC cases rather than a broader change and also asked for a cleaner summary of MSI and TMB reporting for IO candidacy.
+===
+provider_id: P006
+provider_name: Dr. Raj Patel
+2025-10-30 | in-person | Jordan Marks | warm | competitor_loyalty, cost_reimbursement | Escalate pricing discussion to regional VP; Prepare volume-based proposal
+Met with Dr. Patel, the lab director, to discuss expanding Tempus utilization across Northwestern. He controls test routing. Current split is 30 Tempus and 60 Foundation Medicine tests per month. Main blocker is favorable enterprise pricing with the incumbent.
+---
+2026-02-05 | email | Jordan Marks | warm | competitor_loyalty | Follow up on proposal review; Prepare for Q3 Foundation Medicine contract renewal window
+Sent a volume-based pricing proposal for an 80+ tests per month commitment. Dr. Patel said administration is reviewing it, but the pace is slow. He did call out RNA integration and the report summary workflow as the pieces that make this more than a pricing conversation.
+===
+provider_id: P008
+provider_name: Dr. Robert Kim
+2025-08-15 | phone | Jordan Marks | cold | specimen_requirements, competitor_loyalty | Send info on xF liquid biopsy as tissue-free alternative
+Cold call. Dr. Kim said he used Tempus a couple of years ago but moved most volume to Guardant because his office wanted a simpler blood-draw-first workflow and less tissue coordination for staff.
+---
+2025-11-20 | email | Jordan Marks | warm | cost_reimbursement | Send Medicare coverage guide; Schedule brief demo call
+Followed up with xF information. Dr. Kim said he had not realized Tempus now had a liquid-biopsy option that looked close enough to evaluate. His first question was still Medicare coverage for his mostly elderly patient population.
+---
+2026-01-15 | phone | Jordan Marks | warm |  | Set up account for xF ordering; Follow up after first 3 cases
+Demo call on xF workflow. Dr. Kim liked the simplicity: Streck tubes, ship to Tempus, and 5-7 day results. He said he would try it on three patients first before changing his default habit.
+===
+provider_id: P009
+provider_name: Dr. Alejandra Reyes
+2025-12-05 | in-person | Jordan Marks | warm | report_complexity | Share Tempus Hub walkthrough for simplified views; Offer NP and PA training session
+Met at Rush. Dr. Reyes orders around 10 tests per month through us for head and neck cases. Her concern is that NPs and PAs struggle with the full xT report because it feels too dense.
+---
+2026-02-28 | phone | Jordan Marks | hot |  | Follow up on NP ordering workflow; Check volume trend in 60 days
+Completed a 30-minute training session for her 3 NPs on reading the Tempus report summary page. They found it much more accessible than the full variant table.
+===
+provider_id: P011
+provider_name: Dr. Catherine Osei
+2025-09-10 | conference | Jordan Marks | warm | turnaround_time | Send heme panel comparison data; Highlight STAT option for AML
+Met at an ASH satellite symposium. Dr. Osei does mostly AML and MDS and was frustrated with 18-20 day turnaround from FoundationOne Heme. Her AML patients need rapid mutation profiling for targeted therapy selection.
+---
+2026-01-08 | email | Jordan Marks | hot |  | Coordinate STAT pilot with lab ops; Monitor turnaround time performance closely
+Sent heme comparison and STAT turnaround data. Dr. Osei replied that if we can consistently deliver FLT3 and IDH results in under 7 days, she will switch her next 10 AML workups.
+===
+provider_id: P014
+provider_name: Dr. David Greenbaum
+2025-11-01 | in-person | Jordan Marks | cold | clinical_utility_skepticism, competitor_loyalty | Prepare case study on unexpected findings from broad panel in NSCLC; Share NCI-MATCH enrollment data
+Met at a Rush thoracic conference. Dr. Greenbaum orders 8 tests per month through us but sends 18 to Guardant. He said broad-panel language does not land with him unless it changes treatment beyond the standard EGFR, ALK, ROS1, and PD-L1 workup.
+---
+2026-01-25 | email | Jordan Marks | warm | clinical_utility_skepticism | Schedule lunch meeting; Bring MSL for clinical discussion
+Sent three de-identified case examples where xT found actionable mutations outside the standard NSCLC panel. Dr. Greenbaum said the cases were more compelling than the generic deck and agreed to a lunch meeting if we kept the discussion clinical.
+---
+2026-03-15 | in-person | Jordan Marks | warm |  | Monitor dual-testing cases; Follow up on results satisfaction
+Lunch meeting with an MSL. Dr. Greenbaum said the RNA-fusion story made more sense once it was tied to real NSCLC misses. He agreed to send the next five surgical biopsies through xT alongside Guardant liquid biopsy before making a bigger routing decision.
+===
+provider_id: P015
+provider_name: Dr. Angela Park
+2025-10-20 | in-person | Jordan Marks | hot |  | Work with lab on reflex testing protocol; Prepare presentation for breast tumor board
+Quarterly check-in with Dr. Park. She is ordering 35 tests per month and wants to set up automatic reflex testing: xT at diagnosis and xF every 3 months for ESR1 mutation monitoring in ER+ metastatic patients.
+---
+2026-02-15 | in-person | Jordan Marks | hot |  | Follow up with breast surgeons; Document reflex testing workflow for other sites
+Presented the reflex-testing protocol at breast tumor board. Dr. Park offered to loop me into a few breast surgeons who handle the initial biopsies, which could help us get tissue earlier if the workflow stays simple for their teams.
+===
+provider_id: P016
+provider_name: Dr. Frank DiMaggio
+2025-09-05 | phone | Jordan Marks | cold | competitor_loyalty | Research NorthShore testing patterns; Identify unique value proposition versus Foundation Medicine
+Initial outreach to Dr. DiMaggio, medical director at the NorthShore cancer center. He is a longtime Foundation Medicine user and said they are happy with their current vendor.
+---
+2025-12-18 | email | Jordan Marks | warm | competitor_loyalty | Schedule January meeting; Prepare site-specific ROI analysis
+Sent a customized analysis showing how many of NorthShore's lung, GI, and breast cancer cases could benefit from RNA integration that Foundation Medicine does not offer.
+---
+2026-02-10 | in-person | Jordan Marks | warm | needs_comparison_data | Set up 20-patient pilot; Ensure EMR integration is smooth
+In-person meeting at NorthShore. Dr. DiMaggio brought the tumor board coordinator. They want seamless EMR connectivity and proof that the workflow works in their patient population before committing.
+===
+provider_id: P025
+provider_name: Dr. Rachel Goldstein
+2025-12-10 | in-person | Jordan Marks | warm |  | Send xG product info and workflow; Show somatic and germline integration value
+Met Dr. Goldstein at a Northwestern breast surgery conference. She orders around 15 tests per month through us for surgical planning but still sends germline BRCA testing to Myriad. She did not realize we offer xG.
+---
+2026-02-20 | phone | Jordan Marks | hot |  | Set up xG ordering; Coordinate Lynch screening protocol with GI team
+Discussed xG and xT integration benefits: one sample, one report, and germline findings contextualized with somatic results. She said the next set of BRCA referrals should move from Myriad to xG if ordering setup is straightforward and her team does not need extra hand-holding.

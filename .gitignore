@@ -1,0 +1,11 @@
+# Private working notes and presentation artifacts
+DEMO_SCRIPT.md
+SLIDE_DECK_OUTLINE.md
+Plan
+
+# Local Codex / editor state
+.claude/
+
+# Local secrets
+.env
+.env.*
