@@ -10,16 +10,11 @@
 
 Draft a short spoken objection response the rep can edit before using live.
 
-## Required Structure
+## Response Shape
 
-**Acknowledge**
-Show that the concern is reasonable and understood.
-
-**Evidence**
-Respond using only trusted evidence from the reference pack, with inline source identifiers.
-
-**Bridge**
-Convert the answer into a low-pressure next step or pilot ask.
+- Use a clear spoken flow: acknowledge the concern, ground the response in one evidence-backed fact, and land on a low-pressure next step.
+- Return one tight paragraph only.
+- Do not use headings, bullets, or labels like "Acknowledge", "Evidence", or "Bridge".
 
 ## Max Length
 

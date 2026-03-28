@@ -1070,9 +1070,7 @@ Priority rationale example:
 "Dr. Chen scores 82/100 driven by her 60 genomic-eligible patients per month and lapsed status. She already piloted xF with 3 patients and is waiting on tumor-board feedback, so this is the right week to follow up."
 
 Objection response example:
-"**Acknowledge**: Your concern about turnaround time is fair when a patient needs a decision quickly.
-**Evidence**: Tempus positions xF as a rapid liquid-biopsy workflow from blood, and public Tempus oncology materials describe solid-tumor genomic profiling as typically reporting in about 10-14 days after specimen receipt.
-**Bridge**: Could we pressure-test this on your next 3 urgent cases so you can compare the workflow with what you use today?"`,
+"Your concern about turnaround time is fair when a patient needs a decision quickly. Tempus positions xF as a rapid liquid-biopsy workflow from blood, and public Tempus oncology materials describe solid-tumor genomic profiling as typically reporting in about 10-14 days after specimen receipt. Could we pressure-test this on your next 3 urgent cases so you can compare the workflow with what you use today?"`,
   groundingRules: `# Grounding rules
 - Use only the facts in the supplied reference pack and CRM context.
 - Inline-cite source identifiers like [xT_panel] when you mention a metric or product fact.
@@ -1100,12 +1098,7 @@ Write 2 concise sentences that explain why this provider is ranked here and what
 - Suggested next step: {{next_step}}
 
 ## Task
-Write a spoken response in this structure:
-**Acknowledge**
-**Evidence**
-**Bridge**
-
-Keep it under 120 words and cite source identifiers inline.`,
+Write one tight spoken paragraph that acknowledges the concern, grounds the response in one evidence-backed fact, and lands on a low-pressure next step. Do not use headings, bullets, or labels like "Acknowledge", "Evidence", or "Bridge". Keep it under 120 words and cite source identifiers inline.`,
   introScriptPrompt: `## Context
 - Provider: {{provider_name}}, {{provider_specialty}} at {{provider_institution}}
 - Why now: {{why_now}}
@@ -2113,6 +2106,15 @@ function normalizeEditableDraftText(text) {
   return String(text || "").replace(/\*\*/g, "").trim();
 }
 
+function normalizeObjectionDraftText(text) {
+  return normalizeEditableDraftText(text)
+    .replace(/(?:^|\n)\s*(acknowledge|evidence|bridge)\s*:\s*/gi, "\n")
+    .replace(/(?:^|\n)\s*[-*•]\s*/g, "\n")
+    .replace(/\n{2,}/g, "\n")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function renderEditableDraftField(targetEl, textareaId, text, cacheKey) {
   if (!targetEl) return;
   targetEl.innerHTML = `<textarea class="script-textarea" id="${textareaId}"></textarea>`;
@@ -2739,6 +2741,30 @@ function renderManualConnectModal(reason = "") {
   setTimeout(() => document.getElementById("api-key-input")?.focus(), 100);
 }
 
+function renderProxyUnavailableModal(reason = "") {
+  const overlay = document.getElementById("modal-overlay");
+  const modal = document.getElementById("modal-content");
+  const detail = reason ? `<div class="helper-text" style="margin-bottom:12px">${escapeHtml(reason)}</div>` : "";
+  modal.className = "modal";
+  modal.innerHTML = `
+    <h2>Claude Unavailable</h2>
+    <p>The reviewer experience stays in Demo Mode unless the secure server proxy is available. No API key entry is required for the submission demo.</p>
+    ${detail}
+    <div class="btn-row">
+      <button class="btn primary" onclick="hideModal()">Stay in Demo Mode</button>
+    </div>`;
+  overlay.classList.add("show");
+}
+
+function isLocalDevelopmentEnvironment() {
+  const host = window.location.hostname.toLowerCase();
+  return window.location.protocol === "file:"
+    || host === "localhost"
+    || host === "127.0.0.1"
+    || host === "[::1]"
+    || host.endsWith(".local");
+}
+
 async function checkClaudeProxy(force = false) {
   if (connectionState.proxyChecked && !force) {
     return {
@@ -2800,7 +2826,13 @@ async function showApiModal() {
     connectViaProxy(proxyStatus);
     return;
   }
-  renderManualConnectModal(proxyStatus.detail);
+  if (isLocalDevelopmentEnvironment()) {
+    renderManualConnectModal(proxyStatus.detail);
+    return;
+  }
+  connectionState.mode = "demo";
+  updateApiStatus();
+  renderProxyUnavailableModal(proxyStatus.detail);
 }
 
 function connectApi() {
@@ -3060,9 +3092,9 @@ function buildObjectionEvidence(p, ix) {
 
 function buildObjectionResponseLocal(p, ix) {
   if (!ix.objections.length) {
-    return `**Acknowledge**: We already have momentum here, so I would not reopen old concerns.\n**Evidence**: The better move is to anchor on the progress in the note and reinforce the Tempus value that mattered most.\n**Bridge**: ${ix.next_steps[0] || "Could we lock in the next concrete step while interest is still warm?"}`;
+    return `We already have momentum here, so I would not reopen old concerns. The better move is to anchor on the progress in the note and reinforce the Tempus value that mattered most. ${ix.next_steps[0] || "Could we lock in the next concrete step while interest is still warm?"}`;
   }
-  return `**Acknowledge**: ${ix.objections.includes("turnaround_time") ? "That timing concern is fair, especially when treatment decisions are moving quickly." : "That concern is reasonable, and it is exactly the part of the workflow we should pressure-test."}\n**Evidence**: ${buildObjectionEvidence(p, ix)}\n**Bridge**: ${ix.next_steps[0] || "Would it make sense to pressure-test this on the next few appropriate patients?"}`;
+  return `${ix.objections.includes("turnaround_time") ? "That timing concern is fair, especially when treatment decisions are moving quickly." : "That concern is reasonable, and it is exactly the part of the workflow we should pressure-test."} ${buildObjectionEvidence(p, ix)} ${ix.next_steps[0] || "Would it make sense to pressure-test this on the next few appropriate patients?"}`.replace(/\s+/g, " ").trim();
 }
 
 function buildIntroScriptLocal(p) {
@@ -3181,10 +3213,12 @@ function generateObjectionResponse(noteIdx) {
     localText:buildObjectionResponseLocal(p, ix)
   }).then(result => {
     if (!result.text) return;
+    const cleanedText = normalizeObjectionDraftText(result.text);
+    updateCachedContentText(cacheKey, cleanedText);
     renderEditableDraftField(
       document.getElementById(`ai-obj-content-${noteIdx}`),
       `ai-obj-textarea-${noteIdx}`,
-      result.text,
+      cleanedText,
       cacheKey
     );
     renderActionFooter(`ai-obj-footer-${noteIdx}`, sourceIds, [

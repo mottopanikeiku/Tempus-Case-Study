@@ -1,6 +1,6 @@
 # Tempus Sales Copilot
 
-Single-file prototype for the Tempus sales copilot case study, built as a resizable account-prep workspace for oncology field reps.
+Single-file prototype for the Tempus sales copilot case study, built as an account-prep workspace for oncology field reps.
 
 ## What This Includes
 
@@ -13,8 +13,9 @@ Single-file prototype for the Tempus sales copilot case study, built as a resiza
 - `evals/`: output checklist used as part of the generation guardrails
 - `ai/`: supplemental runtime prompt assets for secondary generation flows
 - `scripts/validate_ai_assets.ps1`: lightweight validator for the AI prompt pack files
-- `SLIDE_DECK_OUTLINE.md`: deck-ready copy for the required 8-slide case-study presentation
-- `DEMO_SCRIPT.md`: 90-second and 2-minute demo talk tracks
+- `scripts/validate_local_inputs.ps1`: validator for the local market, CRM, and product inputs
+
+Private presentation materials such as the slide-deck outline and demo script are intentionally kept out of the submitted repo.
 
 ## How To Open The Prototype
 
@@ -82,7 +83,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\validate_local_inputs.ps1
 - Free local demo mode is the default.
 - No API key is required for the ranked list, objection handler, meeting script, or week-plan outputs.
 - Connecting Claude is optional and only adds streaming rewrites inside the same UI.
-- In deployed mode, `Connect Claude` is designed to use a same-origin server proxy instead of asking the reviewer for a key.
+- In deployed mode, `Connect Claude` uses a same-origin server proxy and stays in `Demo Mode` if that proxy is unavailable.
 - Local development still supports manual Anthropic-key entry when the proxy route is unavailable.
 
 ## Interface Notes
@@ -141,7 +142,6 @@ Outputs:
 
 - The app auto-selects the top-ranked provider on load.
 - The left and right work areas are resizable so the evaluator can bias the prototype toward queue management or deep prep.
-- The top-left controls and top-right provider summary collapse into compact states instead of disappearing when their paired lower panes are expanded.
 - Every provider includes a visible Why Now signal and score breakdown.
 - Generated outputs include source-backed reference packs in the UI.
 - The repo includes an internal prompt/eval pack in `docs/`, `prompts/`, and `evals/` so product framing, prompt behavior, and evaluation criteria can be reviewed directly.
