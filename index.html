@@ -357,16 +357,19 @@ body[data-theme="light"] .timeline-item-date{background:#FFFFFF}
 
 .prep-hero-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:18px;margin-top:16px;align-items:start}
 @media(max-width:960px){.prep-hero-grid{grid-template-columns:1fr}}
+.prep-main{min-width:0;display:flex;flex-direction:column;gap:18px}
 .prep-identity{min-width:0;display:flex;flex-direction:column;justify-content:flex-start}
-.prep-why-block{margin-top:18px}
+.prep-why-block{margin-top:0;padding-top:16px;border-top:1px solid var(--border)}
 
 .prep-hero-callout{font-size:15px;line-height:1.65;color:var(--text-primary);font-weight:500;margin-top:6px}
 .prep-helper-line{font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.55}
 
-.prep-sidecard{background:var(--bg-card-hover);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:14px;padding:16px;align-self:start}
+.prep-sidecard{background:var(--bg-card-hover);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:14px;padding:16px;align-self:start;display:flex;flex-direction:column;gap:8px}
 body[data-theme="light"] .prep-sidecard{background:#F3F8F7;border-color:#CFE4E1;border-left-color:#146C63}
-.prep-sidecard-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-top:6px;line-height:1.5}
-.prep-sidecard-copy{font-size:13px;color:var(--text-secondary);margin-top:6px;line-height:1.6}
+.prep-sidecard-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-top:2px;line-height:1.5}
+.prep-sidecard-copy{font-size:13px;color:var(--text-secondary);margin-top:0;line-height:1.6}
+.prep-sidecard-rule{height:1px;background:var(--border);margin:2px 0}
+.prep-sidecard-meta{font-size:12px;line-height:1.6;color:var(--text-secondary)}
 
 /* ─── Essentials grid ─── */
 .essentials-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
@@ -2192,6 +2195,10 @@ function hideScoreSummaryPopover(summary) {
   popover.setAttribute("aria-hidden", "true");
 }
 
+function hideAllScoreSummaryPopovers() {
+  document.querySelectorAll(".score-summary.has-popover").forEach(hideScoreSummaryPopover);
+}
+
 function attachScoreSummaryHandlers(container) {
   const summary = container.querySelector(".score-summary");
   if (!summary) return;
@@ -2440,28 +2447,32 @@ function renderPriorityTab(p) {
         <div class="surface-section hero-section">
           <div class="section-label">Prep Brief</div>
           <div class="prep-hero-grid">
-            <div class="prep-identity">
-              <div class="ph-name">${p.name}, ${p.credentials}</div>
-              <div class="ph-title">${p.title}</div>
-              <div class="ph-institution">${p.institution} | ${p.hospital_system}</div>
-              <div class="ph-badges">
-                <span class="status-badge ${p.tempus_relationship}">${statusLabel}</span>
-                <span class="score-badge ${tier}">${p.score}/100</span>
-                <span class="specialty-pill">${p.specialty}</span>
-                ${primaryConcern !== "No open concern tagged" ? `<span class="objection-tag">${primaryConcern}</span>` : `<span class="info-chip">No open concern tagged</span>`}
+            <div class="prep-main">
+              <div class="prep-identity">
+                <div class="ph-name">${p.name}, ${p.credentials}</div>
+                <div class="ph-title">${p.title}</div>
+                <div class="ph-institution">${p.institution} | ${p.hospital_system}</div>
+                <div class="ph-badges">
+                  <span class="status-badge ${p.tempus_relationship}">${statusLabel}</span>
+                  <span class="score-badge ${tier}">${p.score}/100</span>
+                  <span class="specialty-pill">${p.specialty}</span>
+                  ${primaryConcern !== "No open concern tagged" ? `<span class="objection-tag">${primaryConcern}</span>` : `<span class="info-chip">No open concern tagged</span>`}
+                </div>
+              </div>
+              <div class="prep-why-block">
+                <div class="section-label">Why now</div>
+                <div class="prep-hero-callout">${playbook.whyNow}</div>
+                <div class="prep-helper-line">${playbook.progression}</div>
               </div>
             </div>
             <div class="prep-sidecard">
               <div class="section-label">Next best action</div>
               <div class="prep-sidecard-title">${playbook.nextBestAction}</div>
               <div class="prep-sidecard-copy">${playbook.meetingObjective}</div>
-              <div class="prep-helper-line">Stakeholder lens: ${playbook.stakeholder.badge} | ${playbook.stakeholder.focus}</div>
+              <div class="prep-sidecard-rule"></div>
+              <div class="prep-sidecard-meta"><strong>Stakeholder lens:</strong> ${playbook.stakeholder.badge}</div>
+              <div class="prep-helper-line">${playbook.stakeholder.focus}</div>
             </div>
-          </div>
-          <div class="prep-why-block">
-            <div class="section-label">Why now</div>
-            <div class="prep-hero-callout">${playbook.whyNow}</div>
-            <div class="prep-helper-line">${playbook.progression}</div>
           </div>
         </div>
 
@@ -3395,6 +3406,9 @@ function showToast(message) {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 2500);
 }
+
+document.addEventListener("scroll", hideAllScoreSummaryPopovers, true);
+window.addEventListener("resize", hideAllScoreSummaryPopovers);
 
 // Keyboard navigation
 
