@@ -2097,6 +2097,28 @@ function clearCachedContent(key) {
   delete generatedContent[key];
 }
 
+function updateCachedContentText(key, text) {
+  const existing = getCachedContent(key);
+  if (existing) {
+    existing.text = text;
+    return existing;
+  }
+  return setCachedContent(key, { text, sourceIds: [], mode: "edited" });
+}
+
+function normalizeEditableDraftText(text) {
+  return String(text || "").replace(/\*\*/g, "").trim();
+}
+
+function renderEditableDraftField(targetEl, textareaId, text, cacheKey) {
+  if (!targetEl) return;
+  targetEl.innerHTML = `<textarea class="script-textarea" id="${textareaId}"></textarea>`;
+  const textarea = document.getElementById(textareaId);
+  if (!textarea) return;
+  textarea.value = normalizeEditableDraftText(text);
+  textarea.addEventListener("input", () => updateCachedContentText(cacheKey, textarea.value));
+}
+
 function renderReferencePack(sourceIds = []) {
   const refs = [...new Set(sourceIds)].map(id => SOURCE_LIBRARY[id]).filter(Boolean);
   if (!refs.length) return "";
@@ -3000,6 +3022,14 @@ function copyGeneratedContent(cacheKey, message = "Copied to clipboard") {
   if (item) copyTextValue(item.text.replace(/\*\*/g, ""), message);
 }
 
+function copyEditableDraft(textareaId, cacheKey, message = "Copied to clipboard") {
+  const textarea = document.getElementById(textareaId);
+  const text = textarea ? textarea.value : normalizeEditableDraftText(getCachedContent(cacheKey)?.text || "");
+  if (!text) return;
+  updateCachedContentText(cacheKey, text);
+  copyTextValue(text, message);
+}
+
 function buildPriorityRationaleLocal(p) {
   const playbook = p.playbook || getProviderPlaybook(p);
   return `${p.name} sits at ${p.score}/100 because this account combines ${p.est_genomic_eligible} genomic-eligible patients per month with ${p.competitor_volume} tests still going to ${p.primary_competitor}. ${playbook.whyNow} ${playbook.tempusAngle}`;
@@ -3140,8 +3170,14 @@ function generateObjectionResponse(noteIdx) {
     localText:buildObjectionResponseLocal(p, ix)
   }).then(result => {
     if (!result.text) return;
+    renderEditableDraftField(
+      document.getElementById(`ai-obj-content-${noteIdx}`),
+      `ai-obj-textarea-${noteIdx}`,
+      result.text,
+      cacheKey
+    );
     renderActionFooter(`ai-obj-footer-${noteIdx}`, sourceIds, [
-      `<button class="btn" onclick="copyGeneratedContent('${cacheKey}', 'Response copied')">Copy Draft</button>`
+      `<button class="btn" onclick="copyEditableDraft('ai-obj-textarea-${noteIdx}', '${cacheKey}', 'Response copied')">Copy Draft</button>`
     ]);
   });
 }
@@ -3378,19 +3414,19 @@ document.addEventListener("keydown", e => {
   switch (key) {
     case "j":
       e.preventDefault();
-      if (currentIdx > 0) selectProvider(filtered[currentIdx - 1].id);
+      if (currentIdx > 0) selectProvider(filtered[currentIdx - 1].id, { resetTab: true });
       break;
     case "k":
       e.preventDefault();
-      if (currentIdx < filtered.length - 1) selectProvider(filtered[currentIdx + 1].id);
+      if (currentIdx < filtered.length - 1) selectProvider(filtered[currentIdx + 1].id, { resetTab: true });
       break;
     case "ArrowDown":
       e.preventDefault();
-      if (currentIdx < filtered.length - 1) selectProvider(filtered[currentIdx + 1].id);
+      if (currentIdx < filtered.length - 1) selectProvider(filtered[currentIdx + 1].id, { resetTab: true });
       break;
     case "ArrowUp":
       e.preventDefault();
-      if (currentIdx > 0) selectProvider(filtered[currentIdx - 1].id);
+      if (currentIdx > 0) selectProvider(filtered[currentIdx - 1].id, { resetTab: true });
       break;
     case "1": switchTab("priority"); break;
     case "2": switchTab("objections"); break;
