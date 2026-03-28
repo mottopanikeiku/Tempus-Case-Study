@@ -21,6 +21,10 @@ Private presentation materials such as the slide-deck outline and demo script ar
 
 Recommended and preferred for the evaluator:
 
+Use the published Vercel deployment shared with the submission.
+
+Optional local fallback for repo inspection:
+
 ```powershell
 python -m http.server 8080
 ```
@@ -28,6 +32,46 @@ python -m http.server 8080
 Then open `http://localhost:8080`.
 
 Opening `index.html` directly may fall back to the embedded copy of the data. Use a local server if you want the prototype to visibly ingest the CSV, markdown, and CRM text files at runtime.
+
+## Reviewer Guide
+
+This submission is a concept prototype for one narrow workflow:
+
+- weekly territory prioritization
+- pre-meeting account prep
+- objection-aware drafting
+- short talk-track generation
+
+The fastest way to review it:
+
+1. Open the published Vercel demo.
+2. Start in `Plan`.
+3. Review the top-ranked account and its `Why now` signal.
+4. Switch to `Providers`.
+5. Open one provider in `Prep Brief`.
+6. Open `Objections` and generate a draft response.
+7. Open `Talk Track` and generate the 30-second pitch.
+
+What to look for:
+
+- Ranking is deterministic and explainable.
+- `Account Fit` is a structured scoring signal, not a model opinion.
+- Generated outputs are grounded in public Tempus facts plus supplied CRM context.
+- `Connect Claude` is optional; the prototype is reviewable in `Demo Mode`.
+
+What is real vs synthetic:
+
+- Real / grounded: public Tempus product facts, citations, prompt/eval architecture, and product logic.
+- Synthetic: provider identities, CRM notes, territory context, and opportunity volumes.
+
+What this is not:
+
+- not a production CRM integration
+- not autonomous outreach
+- not treatment recommendation
+- not a full manager analytics product
+
+The intended framing is a focused case-study prototype that demonstrates product thinking, workflow judgment, and bounded AI usage in one commercial Tempus workflow.
 
 ## Prompt And Eval Pack
 
