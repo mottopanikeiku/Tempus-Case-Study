@@ -24,11 +24,14 @@ Draft a 30-second meeting opener the rep can use as a starting point.
 ## Output Requirements
 
 - Use the context above directly; do not ask for more account details.
+- Make it sound spoken, not like a follow-up email or internal memo.
+- Use 3 to 4 short sentences, not a paragraph with multiple clauses.
 - Use one concrete, evidence-backed Tempus fact when available.
+- Keep the value point narrow and relevant instead of listing multiple Tempus capabilities.
 - Mention why this conversation matters now.
 - End with a low-pressure next ask.
 - Keep it sounding like a field rep, not a polished marketing asset.
 
 ## Length
 
-- Aim for 80-110 words
+- Aim for 55-80 words

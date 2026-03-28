@@ -381,17 +381,20 @@ body[data-theme="light"] .essential-card{background:#FFFFFF;border-color:#D9E2EC
 
 /* ─── Score summary bar ─── */
 .score-summary{margin-top:14px}
-.score-summary-bar{display:flex;height:12px;border-radius:999px;overflow:hidden;margin-bottom:8px;background:var(--bg-card)}
+.score-summary-track{position:relative;transition:margin-bottom .16s ease}
+.score-summary.has-popover .score-summary-track{margin-bottom:96px}
+.score-summary-bar{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--bg-card)}
 .score-summary-seg{display:block;height:100%;transition:width .4s ease;cursor:help;appearance:none;border:none;padding:0;min-width:8px;position:relative}
 .score-summary-seg:focus-visible{outline:2px solid var(--text-primary);outline-offset:2px}
-.score-summary-copy{font-size:12px;color:var(--text-secondary);line-height:1.5}
-.score-summary-hint{font-size:11px;color:var(--text-dim);margin-top:6px}
-.score-summary-tooltip{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card-hover);min-height:66px;display:flex;flex-direction:column;justify-content:center;gap:4px}
-.score-summary-tooltip-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text-primary)}
-.score-summary-tooltip-swatch{width:10px;height:10px;border-radius:999px;flex:0 0 auto;background:var(--swatch, var(--accent))}
-.score-summary-tooltip-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim)}
-.score-summary-tooltip-copy{font-size:12px;line-height:1.55;color:var(--text-secondary)}
-body[data-theme="light"] .score-summary-tooltip{background:#FFFFFF;border-color:#D9E2EC}
+.score-summary-copy{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-top:8px}
+.score-summary-popover{position:absolute;top:calc(100% + 12px);left:0;width:min(280px,calc(100vw - 72px));padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card-hover);box-shadow:0 18px 32px rgba(2,6,23,0.22);display:flex;flex-direction:column;gap:4px;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px);transition:opacity .14s ease,transform .14s ease,visibility .14s ease;z-index:4}
+.score-summary.has-popover .score-summary-popover{opacity:1;visibility:visible;transform:translateY(0)}
+.score-summary-popover::before{content:"";position:absolute;top:-7px;left:var(--arrow-left,24px);width:12px;height:12px;background:inherit;border-top:1px solid var(--border);border-left:1px solid var(--border);transform:translateX(-50%) rotate(45deg);border-top-left-radius:2px}
+.score-summary-popover-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text-primary)}
+.score-summary-popover-swatch{width:10px;height:10px;border-radius:999px;flex:0 0 auto;background:var(--swatch, var(--accent))}
+.score-summary-popover-meta{font-family:var(--font-mono);font-size:10px;color:var(--text-dim)}
+.score-summary-popover-copy{font-size:12px;line-height:1.55;color:var(--text-secondary)}
+body[data-theme="light"] .score-summary-popover{background:#FFFFFF;border-color:#D9E2EC;box-shadow:0 16px 28px rgba(15,23,42,0.12)}
 
 /* ─── Context disclosure (details/summary) ─── */
 .context-disclosure{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
@@ -2090,6 +2093,10 @@ function setCachedContent(key, payload) {
   return payload;
 }
 
+function clearCachedContent(key) {
+  delete generatedContent[key];
+}
+
 function renderReferencePack(sourceIds = []) {
   const refs = [...new Set(sourceIds)].map(id => SOURCE_LIBRARY[id]).filter(Boolean);
   if (!refs.length) return "";
@@ -2119,40 +2126,48 @@ function renderActionFooter(targetId, sourceIds = [], buttons = []) {
 function renderScoreSummary(p, totalWeighted) {
   return `
     <div class="score-summary" style="margin-top:14px">
-      <div class="score-summary-bar" role="group" aria-label="Priority score component breakdown">
-        ${SCORE_COMPONENTS.map(component => {
-          const rawValue = p.components[component.key].toFixed(2);
-          const weightedValue = (p.weightedComponents[component.key] * 100).toFixed(1);
-          return `<button type="button" class="score-summary-seg" style="width:${(p.weightedComponents[component.key] / totalWeighted) * 100}%;background:${component.color}" data-label="${escapeHtml(component.label)}" data-description="${escapeHtml(component.description)}" data-raw="${rawValue}" data-weighted="${weightedValue}" data-color="${component.color}" aria-label="${escapeHtml(`${component.label}. Raw ${rawValue}. Weighted ${weightedValue} points.`)}"></button>`;
-        }).join("")}
+      <div class="score-summary-track">
+        <div class="score-summary-bar" role="group" aria-label="Priority score component breakdown">
+          ${SCORE_COMPONENTS.map(component => {
+            const rawValue = p.components[component.key].toFixed(2);
+            const weightedValue = (p.weightedComponents[component.key] * 100).toFixed(1);
+            return `<button type="button" class="score-summary-seg" style="width:${(p.weightedComponents[component.key] / totalWeighted) * 100}%;background:${component.color}" data-label="${escapeHtml(component.label)}" data-description="${escapeHtml(component.description)}" data-raw="${rawValue}" data-weighted="${weightedValue}" data-color="${component.color}" aria-label="${escapeHtml(`${component.label}. Raw ${rawValue}. Weighted ${weightedValue} points.`)}"></button>`;
+          }).join("")}
+        </div>
+        <div class="score-summary-popover" aria-hidden="true"></div>
       </div>
       <div class="score-summary-copy">Priority ${p.score}/100, driven most by ${getTopDrivers(p).join(" and ")}.</div>
-      <div class="score-summary-hint">Hover a color segment to inspect the component and score behind it.</div>
-      <div class="score-summary-tooltip" aria-live="polite">
-        <div class="score-summary-tooltip-label"><span class="score-summary-tooltip-swatch"></span>Priority score breakdown</div>
-        <div class="score-summary-tooltip-meta">Hover, focus, or tap a color segment</div>
-        <div class="score-summary-tooltip-copy">Each color maps to one deterministic ranking component and shows both the raw score and weighted points.</div>
-      </div>
     </div>`;
 }
 
-function updateScoreSummaryTooltip(segment) {
+function updateScoreSummaryPopover(segment) {
   const summary = segment.closest(".score-summary");
-  const tooltip = summary?.querySelector(".score-summary-tooltip");
-  if (!tooltip) return;
-  tooltip.innerHTML = `
-    <div class="score-summary-tooltip-label"><span class="score-summary-tooltip-swatch" style="--swatch:${segment.dataset.color || "var(--accent)"}"></span>${segment.dataset.label || "Score component"}</div>
-    <div class="score-summary-tooltip-meta">Raw ${segment.dataset.raw || "0.00"} &bull; Weighted ${segment.dataset.weighted || "0.0"} points</div>
-    <div class="score-summary-tooltip-copy">${segment.dataset.description || "Deterministic scoring component."}</div>`;
+  const track = summary?.querySelector(".score-summary-track");
+  const popover = summary?.querySelector(".score-summary-popover");
+  if (!summary || !track || !popover) return;
+  popover.innerHTML = `
+    <div class="score-summary-popover-label"><span class="score-summary-popover-swatch" style="--swatch:${segment.dataset.color || "var(--accent)"}"></span>${segment.dataset.label || "Score component"}</div>
+    <div class="score-summary-popover-meta">Raw ${segment.dataset.raw || "0.00"} &bull; Weighted ${segment.dataset.weighted || "0.0"} points</div>
+    <div class="score-summary-popover-copy">${segment.dataset.description || "Deterministic scoring component."}</div>`;
+  summary.classList.add("has-popover");
+  popover.setAttribute("aria-hidden", "false");
+
+  const trackRect = track.getBoundingClientRect();
+  const segmentRect = segment.getBoundingClientRect();
+  const popoverWidth = popover.offsetWidth || 260;
+  const idealLeft = (segmentRect.left - trackRect.left) + (segmentRect.width / 2) - (popoverWidth / 2);
+  const clampedLeft = Math.max(0, Math.min(idealLeft, track.clientWidth - popoverWidth));
+  const arrowLeft = Math.max(18, Math.min(popoverWidth - 18, (segmentRect.left - trackRect.left) + (segmentRect.width / 2) - clampedLeft));
+
+  popover.style.left = `${clampedLeft}px`;
+  popover.style.setProperty("--arrow-left", `${arrowLeft}px`);
 }
 
-function resetScoreSummaryTooltip(summary) {
-  const tooltip = summary?.querySelector(".score-summary-tooltip");
-  if (!tooltip) return;
-  tooltip.innerHTML = `
-    <div class="score-summary-tooltip-label"><span class="score-summary-tooltip-swatch"></span>Priority score breakdown</div>
-    <div class="score-summary-tooltip-meta">Hover, focus, or tap a color segment</div>
-    <div class="score-summary-tooltip-copy">Each color maps to one deterministic ranking component and shows both the raw score and weighted points.</div>`;
+function hideScoreSummaryPopover(summary) {
+  const popover = summary?.querySelector(".score-summary-popover");
+  if (!summary || !popover) return;
+  summary.classList.remove("has-popover");
+  popover.setAttribute("aria-hidden", "true");
 }
 
 function attachScoreSummaryHandlers(container) {
@@ -2160,16 +2175,19 @@ function attachScoreSummaryHandlers(container) {
   if (!summary) return;
   const segments = summary.querySelectorAll(".score-summary-seg");
   segments.forEach(segment => {
-    segment.addEventListener("mouseenter", () => updateScoreSummaryTooltip(segment));
-    segment.addEventListener("focus", () => updateScoreSummaryTooltip(segment));
-    segment.addEventListener("click", () => updateScoreSummaryTooltip(segment));
+    segment.addEventListener("mouseenter", () => updateScoreSummaryPopover(segment));
+    segment.addEventListener("focus", () => updateScoreSummaryPopover(segment));
+    segment.addEventListener("click", event => {
+      event.preventDefault();
+      updateScoreSummaryPopover(segment);
+    });
     segment.addEventListener("mouseleave", event => {
       if (event.relatedTarget && event.relatedTarget.closest(".score-summary") === summary) return;
-      resetScoreSummaryTooltip(summary);
+      hideScoreSummaryPopover(summary);
     });
     segment.addEventListener("blur", event => {
       if (event.relatedTarget && event.relatedTarget.closest(".score-summary") === summary) return;
-      resetScoreSummaryTooltip(summary);
+      hideScoreSummaryPopover(summary);
     });
   });
 }
@@ -2941,8 +2959,8 @@ async function streamClaude(userPrompt, targetEl, temperature = 0.5, sourceIds =
     : streamClaudeViaBrowserKey(payload, targetEl);
 }
 
-async function generateWithFallback({ cacheKey, prompt, targetEl, temperature, sourceIds, localText }) {
-  const cached = getCachedContent(cacheKey);
+async function generateWithFallback({ cacheKey, prompt, targetEl, temperature, sourceIds, localText, forceRefresh = false }) {
+  const cached = !forceRefresh ? getCachedContent(cacheKey) : null;
   if (cached) {
     targetEl.innerHTML = formatAiText(cached.text);
     return cached;
@@ -3022,21 +3040,21 @@ function buildMeetingScriptLocal(p, tone) {
   const last = getLatestInteraction(p);
   const products = getRelevantProducts(p);
   const opener = last
-    ? `Last time we spoke, you mentioned ${last.note.slice(0, 80).replace(/"/g, "").trim()}.`
-    : `You are seeing a strong ${p.top_cancer_types[0]} opportunity and I wanted to make this relevant quickly.`;
+    ? `Last time we spoke, you flagged ${last.note.slice(0, 58).replace(/"/g, "").trim().replace(/[,:;]?\s*$/, "")}.`
+    : `I wanted to make this relevant quickly for your ${p.top_cancer_types[0].toLowerCase()} patients.`;
   const metricLine = isHemeProvider(p)
-    ? `Tempus can streamline hematologic ordering through comprehensive therapy selection and bring xR whole-transcriptome RNA sequencing, which reports clinically relevant fusions across more than 100 targeted genes.`
+    ? `Tempus can streamline hematologic ordering and use xR when fusion or splice biology matters.`
     : products.includes("xF")
-    ? `Tempus can start with xF, a 105-gene liquid biopsy workflow from blood, then expand to xT or xR when the case needs broader DNA or RNA detail.`
-    : `Tempus can lead with xT CDx, a 648-gene tissue DNA panel, and pair it with xR when RNA fusion biology matters.`;
-  const ask = playbook.nextBestAction.endsWith(".") ? playbook.nextBestAction : `${playbook.nextBestAction}.`;
+    ? `Tempus can start with xF from blood, then expand to xT or xR when you need broader DNA or RNA detail.`
+    : `Tempus can lead with xT CDx and add xR when RNA fusion biology matters.`;
+  const ask = (playbook.nextBestAction || "set up a brief follow-up").replace(/\.$/, "");
   if (tone === "Conversational / Relationship") {
-    return `${opener} I do not want to overcomplicate this, but I think this account makes sense right now because ${playbook.whyNow.toLowerCase()} ${metricLine} If you are open to it, ${ask}`;
+    return `${opener} I think this matters now because ${playbook.whyNow.toLowerCase()} ${metricLine} If it would help, we can ${ask.toLowerCase()}.`;
   }
   if (tone === "Direct / Business Case") {
-    return `${opener} From a territory standpoint, this is a real conversion opportunity because you still have ${p.competitor_volume} tests a month with ${p.primary_competitor}. ${metricLine} My goal today would be simple: ${playbook.meetingObjective.toLowerCase()}`;
+    return `${opener} You still have ${p.competitor_volume} tests a month with ${p.primary_competitor}, so this is a real conversion opportunity. ${metricLine} The goal today is simple: ${playbook.meetingObjective.toLowerCase()}.`;
   }
-  return `${opener} The reason I am bringing Tempus up now is that ${playbook.whyNow.toLowerCase()} ${metricLine} If it makes sense, ${ask}`;
+  return `${opener} The reason I am bringing Tempus up now is that ${playbook.whyNow.toLowerCase()} ${metricLine} Would it be worth a short follow-up so we can ${ask.toLowerCase()}?`;
 }
 
 function buildWeekPlanLocal() {
@@ -3175,7 +3193,7 @@ function renderScriptResult(text, sourceIds, tone) {
       <textarea class="script-textarea" id="script-textarea"></textarea>
       <div class="btn-row">
         <button class="btn" onclick="copyScript()">Copy to Clipboard</button>
-        <button class="btn" onclick="generateMeetingScript()">Regenerate</button>
+        <button class="btn" onclick="regenerateMeetingScript()">Regenerate</button>
       </div>
       <div id="script-footer"></div>
     </div>`;
@@ -3184,9 +3202,10 @@ function renderScriptResult(text, sourceIds, tone) {
   renderActionFooter("script-footer", sourceIds);
 }
 
-function generateMeetingScript() {
+function generateMeetingScript(options = {}) {
   const p = rankedProviders.find(provider => provider.id === selectedProviderId);
   if (!p) return;
+  const { forceRefresh = false } = options;
   const tone = document.getElementById("tone-select")?.value || "Clinical / Data-Driven";
   const stakeholder = getStakeholderProfile(p);
   const sourceIds = getSourceIdsForProvider(p);
@@ -3213,11 +3232,23 @@ function generateMeetingScript() {
     targetEl:document.getElementById("ai-script-content"),
     temperature:CONFIG.temps.scripts,
     sourceIds,
-    localText:buildMeetingScriptLocal(p, tone)
+    localText:buildMeetingScriptLocal(p, tone),
+    forceRefresh
   }).then(result => {
     if (!result.text) return;
     renderScriptResult(result.text, sourceIds, tone);
   });
+}
+
+function regenerateMeetingScript() {
+  const p = rankedProviders.find(provider => provider.id === selectedProviderId);
+  if (!p) return;
+  const tone = document.getElementById("tone-select")?.value || "Clinical / Data-Driven";
+  clearCachedContent(getCacheKey("script", p.id, tone));
+  if (!isClaudeConnected()) {
+    showToast("Claude is not connected. Demo mode uses a fixed local draft.");
+  }
+  generateMeetingScript({ forceRefresh: true });
 }
 
 function copyScript() {
